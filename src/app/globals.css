@@ -2489,3 +2489,18 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 4px;
   padding: 1px 5px;
 }
+/* Excelsior crest — theme-adaptive header mark (paste into globals.css).
+   The crest recolors itself: light ink on dark UI, dark ink on light UI,
+   with full engraving detail preserved (same technique as ExcelComms). */
+:root{ --ex-ink:#e8eef6; }                         /* dark UI (OSIRIS default) */
+@media (prefers-color-scheme: light){ :root{ --ex-ink:#14171c; } }
+
+.ex-crest{
+  display:inline-block;
+  width:34px; aspect-ratio:996 / 1033;             /* crest-only proportions */
+  -webkit-mask:url(/crest-mark.png) center/contain no-repeat;
+          mask:url(/crest-mark.png) center/contain no-repeat;
+  background-color:var(--ex-ink);
+}
+.ex-crest.lg{ width:120px; }                        /* splash / about */
+.ex-word{ font-weight:600; letter-spacing:.16em; }  /* optional wordmark beside the crest */

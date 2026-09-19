@@ -3,12 +3,12 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import "./globals.css";
 
 const SITE_URL = "https://osirisai.live";
-const SITE_NAME = "OSIRIS";
-const SITE_TITLE = "OSIRIS — Open Source Intelligence Platform | Live Flight Tracking, CCTV, OSINT Tools & More";
-const SITE_DESCRIPTION = "The open-source Palantir alternative. Track live aircraft, satellites, and worldwide CCTV cameras on a 3D globe. Run Nmap scans, DNS lookups, WHOIS queries, SSL cert analysis & threat intelligence — all from your browser. 20+ data sources including live earthquake, wildfire, cyber threat and conflict feeds, plus mapped reference data such as nuclear facilities. Free & open source.";
+const SITE_NAME = "Excelsior";
+const SITE_TITLE = "Excelsior · Intelligence Grid";
+const SITE_DESCRIPTION = "Excelsior Communications — global intelligence grid.";
 
 export const viewport: Viewport = {
-  themeColor: "#D4AF37",
+  themeColor: "#0a0e14",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: SITE_TITLE,
-    template: "%s | OSIRIS Intelligence",
+    template: "%s | Excelsior",
   },
   description: SITE_DESCRIPTION,
   keywords: [
