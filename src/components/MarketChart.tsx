@@ -86,8 +86,8 @@ export default function MarketChart({ symbol, name, onClose, large = false }: Ma
       rightPriceScale: { borderColor: AXIS, scaleMargins: { top: 0.1, bottom: 0.26 } },
       timeScale: { borderColor: AXIS, secondsVisible: false },
       crosshair: {
-        vertLine: { color: 'rgba(212,175,55,0.4)', labelBackgroundColor: '#D4AF37' },
-        horzLine: { color: 'rgba(212,175,55,0.4)', labelBackgroundColor: '#D4AF37' },
+        vertLine: { color: 'rgba(255,255,255,0.4)', labelBackgroundColor: '#FFFFFF' },
+        horzLine: { color: 'rgba(255,255,255,0.4)', labelBackgroundColor: '#FFFFFF' },
       },
       handleScale: { axisPressedMouseMove: false },
     });

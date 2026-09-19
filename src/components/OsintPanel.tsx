@@ -45,11 +45,11 @@ const TABS: ToolDef[] = [
   { id: 'vuln', label: 'VULN SWEEP', icon: Bug, placeholder: 'IP or hostname', color: '#FF3D3D', group: 'network', blurb: 'Known CVEs affecting the host' },
   { id: 'shodan', label: 'SHODAN IOT', icon: Network, placeholder: 'IP address', color: '#FF3D3D', group: 'network', blurb: 'Internet-exposed device record' },
   { id: 'bgp', label: 'BGP ROUTE', icon: Globe, placeholder: 'IP or ASN', color: '#00E5FF', group: 'network', blurb: 'Autonomous system and prefixes' },
-  { id: 'mac', label: 'MAC ADDR', icon: Fingerprint, placeholder: 'MAC address', color: '#FFD700', group: 'network', blurb: 'Hardware vendor lookup' },
+  { id: 'mac', label: 'MAC ADDR', icon: Fingerprint, placeholder: 'MAC address', color: '#FFFFFF', group: 'network', blurb: 'Hardware vendor lookup' },
   { id: 'sweep', label: 'IP SWEEP', icon: Crosshair, placeholder: 'Enter IP address (e.g. 8.8.8.8)', color: '#FF3D3D', group: 'network', blurb: 'Scan an entire subnet' },
 
   { id: 'dns', label: 'DNS', icon: Server, placeholder: 'Domain name', color: '#448AFF', group: 'domain', blurb: 'All record types' },
-  { id: 'whois', label: 'WHOIS', icon: FileText, placeholder: 'Domain name', color: '#FFD700', group: 'domain', blurb: 'Registrar and ownership' },
+  { id: 'whois', label: 'WHOIS', icon: FileText, placeholder: 'Domain name', color: '#FFFFFF', group: 'domain', blurb: 'Registrar and ownership' },
   { id: 'certs', label: 'CERTS', icon: Lock, placeholder: 'Domain name', color: '#E040FB', group: 'domain', blurb: 'Certificate transparency log' },
   { id: 'ssl', label: 'SSL/TLS', icon: Shield, placeholder: 'Domain name', color: '#76FF03', group: 'domain', blurb: 'Cipher and certificate health' },
   { id: 'subdomains', label: 'SUBDOMAINS', icon: Layers, placeholder: 'Domain to enumerate', color: '#00BCD4', group: 'domain', blurb: 'Enumerate attack surface' },
@@ -525,9 +525,9 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
     if (activeTab === 'whois') {
       return (
         <div>
-          <SectionHeader title="WHOIS INTELLIGENCE" icon={FileText} color="#FFD700" />
+          <SectionHeader title="WHOIS INTELLIGENCE" icon={FileText} color="#FFFFFF" />
           <SanctionsBadge match={r.sanctions_match} />
-          <ResultRow label="Domain" value={r.domain_name || r.domainName || query} color="#FFD700" />
+          <ResultRow label="Domain" value={r.domain_name || r.domainName || query} color="#FFFFFF" />
           <ResultRow label="Registrar" value={r.registrar} />
           <ResultRow label="Created" value={r.creation_date || r.createdDate} />
           <ResultRow label="Expires" value={r.expiration_date || r.expiresDate} />
@@ -601,8 +601,8 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
     if (activeTab === 'mac') {
       return (
         <div>
-          <SectionHeader title="MAC VENDOR LOOKUP" icon={Fingerprint} color="#FFD700" />
-          <ResultRow label="MAC Address" value={r.mac} color="#FFD700" />
+          <SectionHeader title="MAC VENDOR LOOKUP" icon={Fingerprint} color="#FFFFFF" />
+          <ResultRow label="MAC Address" value={r.mac} color="#FFFFFF" />
           <ResultRow label="Vendor" value={r.vendor} color={r.vendor === 'Not Found' ? '#FF3D3D' : '#00E676'} />
         </div>
       );
@@ -786,7 +786,7 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
     if (activeTab === 'crypto') {
       const ACCENT = '#F7931A';
       const RISK_COLOR: Record<string, string> = {
-        critical: '#FF1744', high: '#FF3D3D', medium: '#FF9500', low: '#FFD700', info: '#00E676',
+        critical: '#FF1744', high: '#FF3D3D', medium: '#FF9500', low: '#FFFFFF', info: '#00E676',
       };
       const riskColor = RISK_COLOR[r.risk?.level] || '#00E676';
       const fmt = (n: number, d = 4) =>
@@ -843,7 +843,7 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
             color={r.activity?.age_days != null ? undefined : 'var(--text-muted)'}
           />
           {r.ambiguous_chain && (
-            <ResultRow label="Note" value="Address format is valid on both Bitcoin and Solana; assumed Bitcoin." color="#FFD700" />
+            <ResultRow label="Note" value="Address format is valid on both Bitcoin and Solana; assumed Bitcoin." color="#FFFFFF" />
           )}
 
           {r.labels?.length > 0 && (
@@ -1470,7 +1470,7 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
             <span className="text-[11px] font-mono text-[#E8E6E0]">{sweepProgress.total} hosts</span>
           </div>
           <div className="w-full h-1.5 bg-[#1A1A18] rounded-full overflow-hidden">
-            <div className="h-full rounded-full" style={{ width: '100%', background: 'linear-gradient(90deg, #FF3D3D, #FF6B00, #FFD700)', animation: 'sweep-pulse 1.5s ease-in-out infinite' }} />
+            <div className="h-full rounded-full" style={{ width: '100%', background: 'linear-gradient(90deg, #FF3D3D, #FF6B00, #FFFFFF)', animation: 'sweep-pulse 1.5s ease-in-out infinite' }} />
           </div>
         </div>
       )}
@@ -1626,7 +1626,7 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
                             const severityColor = !info?.severity ? '#5C5A54'
                               : info.severity === 'CRITICAL' ? '#FF3D3D'
                               : info.severity === 'HIGH' ? '#FF6B00'
-                              : info.severity === 'MEDIUM' ? '#FFD700'
+                              : info.severity === 'MEDIUM' ? '#FFFFFF'
                               : '#76FF03';
                             return (
                               <div key={cveId} className="bg-[#111] border border-[#2A2A28] rounded-lg p-3">

@@ -132,10 +132,10 @@ export function classifyDevice(
     return { device_type: 'DNS Server', device_icon: 'Server', device_color: '#00BCD4' };
   }
   if (portSet.has(21) || portSet.has(990)) {
-    return { device_type: 'FTP Server', device_icon: 'HardDrive', device_color: '#FFD700' };
+    return { device_type: 'FTP Server', device_icon: 'HardDrive', device_color: '#FFFFFF' };
   }
   if (portSet.has(1194) || portSet.has(1723) || portSet.has(500) || portSet.has(4500) || cpeLower.some((c) => /openvpn|wireguard/.test(c))) {
-    return { device_type: 'VPN Gateway', device_icon: 'ShieldCheck', device_color: '#D4AF37' };
+    return { device_type: 'VPN Gateway', device_icon: 'ShieldCheck', device_color: '#FFFFFF' };
   }
   if (portSet.has(3389)) {
     return { device_type: 'Windows Workstation', device_icon: 'Monitor', device_color: '#E040FB' };

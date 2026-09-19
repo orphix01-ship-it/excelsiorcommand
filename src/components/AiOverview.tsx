@@ -117,7 +117,7 @@ function AlertsBrief({ result, accent, activeThreadId, onThreadSelect }: {
 
       {quake && (
         <div className="mt-2 flex items-center gap-2 rounded-md border border-white/5 bg-white/[0.02] px-2 py-1.5 text-[10px]">
-          <CircleDot className="w-3 h-3 flex-shrink-0" style={{ color: quake.magnitude >= 6 ? '#FF3D3D' : quake.magnitude >= 5 ? '#FF9500' : '#FFD700' }} />
+          <CircleDot className="w-3 h-3 flex-shrink-0" style={{ color: quake.magnitude >= 6 ? '#FF3D3D' : quake.magnitude >= 5 ? '#FF9500' : '#FFFFFF' }} />
           <span className="flex-1 min-w-0 truncate text-[var(--text-secondary)]">
             Strongest quake <b className="text-[var(--text-primary)]">M{quake.magnitude.toFixed(1)}</b> {quake.place}
           </span>

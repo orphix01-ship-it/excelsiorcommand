@@ -65,7 +65,7 @@ export function calculatePerimeter(coords: number[][]): number {
 }
 
 const POLYGON_COLORS = [
-  '#00E5FF', '#FF3D57', '#FFD700', '#00E676', '#E040FB',
+  '#00E5FF', '#FF3D57', '#FFFFFF', '#00E676', '#E040FB',
   '#FF6D00', '#40C4FF', '#69F0AE', '#FFAB40', '#7C4DFF',
 ];
 

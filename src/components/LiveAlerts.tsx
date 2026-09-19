@@ -218,8 +218,8 @@ function toQuake(raw: unknown): QuakeAlert | null {
   };
 }
 
-const quakeColor = (m: number) => (m >= 6 ? '#FF3D3D' : m >= 5 ? '#FF9500' : m >= 4 ? '#FFD700' : '#9CCC65');
-const PAGER_COLORS: Record<string, string> = { green: '#00E676', yellow: '#FFD700', orange: '#FF9500', red: '#FF3D3D' };
+const quakeColor = (m: number) => (m >= 6 ? '#FF3D3D' : m >= 5 ? '#FF9500' : m >= 4 ? '#FFFFFF' : '#9CCC65');
+const PAGER_COLORS: Record<string, string> = { green: '#00E676', yellow: '#FFFFFF', orange: '#FF9500', red: '#FF3D3D' };
 const blocColor = (b: Bloc | null) => (b ? BLOCS[b].color : '#5C5A54');
 
 function compactCount(n: number): string {

@@ -46,9 +46,9 @@ export async function GET() {
       if (kpIndex >= 8) { stormLevel = 'Extreme (G5)'; stormColor = '#FF1744'; }
       else if (kpIndex >= 7) { stormLevel = 'Severe (G4)'; stormColor = '#FF3D3D'; }
       else if (kpIndex >= 6) { stormLevel = 'Strong (G3)'; stormColor = '#FF9500'; }
-      else if (kpIndex >= 5) { stormLevel = 'Moderate (G2)'; stormColor = '#FFD700'; }
-      else if (kpIndex >= 4) { stormLevel = 'Minor (G1)'; stormColor = '#FFD700'; }
-      else if (kpIndex >= 3) { stormLevel = 'Unsettled'; stormColor = '#D4AF37'; }
+      else if (kpIndex >= 5) { stormLevel = 'Moderate (G2)'; stormColor = '#FFFFFF'; }
+      else if (kpIndex >= 4) { stormLevel = 'Minor (G1)'; stormColor = '#FFFFFF'; }
+      else if (kpIndex >= 3) { stormLevel = 'Unsettled'; stormColor = '#FFFFFF'; }
       else { stormLevel = 'Quiet'; stormColor = '#00E676'; }
     }
 

@@ -122,7 +122,7 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-status-bar-style": "black-translucent",
     "apple-mobile-web-app-title": "OSIRIS",
     "mobile-web-app-capable": "yes",
-    "msapplication-TileColor": "#06060C",
+    "msapplication-TileColor": "#050505",
     "msapplication-config": "none",
   },
 };

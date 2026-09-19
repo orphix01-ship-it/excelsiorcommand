@@ -314,7 +314,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createIcon(map, 'plane-pink', flightGov, 24);    
       createIcon(map, 'plane-red', flightMil, 24);     
       createIcon(map, 'plane-grey', boot.flightUnknown, 24);
-      createDot(map, 'dot-gold', isGhost ? phantomPurple : '#D4AF37', 8);
+      createDot(map, 'dot-gold', isGhost ? phantomPurple : '#FFFFFF', 8);
       createDot(map, 'dot-red', isGhost ? phantomPurple : '#D32F2F', 10);
       createDot(map, 'dot-orange', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-green', isGhost ? phantomPurple : '#26A69A', 10);
@@ -504,7 +504,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({ id: 'cf-outage-dots', type: 'circle', source: 'cf-outages', paint: {
         'circle-radius': ['interpolate',['linear'],['zoom'], 1,4, 5,6, 10,9],
         // Resolved outages read cooler than ongoing ones.
-        'circle-color': ['case',['get','ongoing'],'#FFB300','#8B7325'],
+        'circle-color': ['case',['get','ongoing'],'#FFB300','#9AA0A6'],
         'circle-opacity': 0.9,
         'circle-stroke-width': 1.5, 'circle-stroke-color': '#000000', 'circle-stroke-opacity': 0.7,
       }});
@@ -1148,7 +1148,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       const coords = (e.features[0].geometry as any).coordinates;
       // MapLibre serialises feature properties, so booleans can arrive as strings.
       const ongoing = p.ongoing === true || p.ongoing === 'true';
-      const accent = ongoing ? '#FFB300' : '#8B7325';
+      const accent = ongoing ? '#FFB300' : '#9AA0A6';
       const src = urlSafe(p.url);
       popup(coords, `
       <div style="${pStyle}border:1px solid ${accent}66;min-width:250px;">
@@ -1363,7 +1363,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       const ports = JSON.parse(p.ports || '[]');
       const vulns = JSON.parse(p.vulns || '[]');
       const hostnames = JSON.parse(p.hostnames || '[]');
-      const riskColors: Record<string, string> = { CRITICAL: '#FF3D3D', HIGH: '#FF6B00', MEDIUM: '#FFD700', LOW: '#76FF03', INFO: '#5C5A54' };
+      const riskColors: Record<string, string> = { CRITICAL: '#FF3D3D', HIGH: '#FF6B00', MEDIUM: '#FFFFFF', LOW: '#76FF03', INFO: '#5C5A54' };
       popup(coords, `<div style="font-family:monospace;font-size:11px;color:#E8E6E0;">
         <div style="font-size:13px;font-weight:bold;margin-bottom:6px;color:${p.color};">${p.device_type}</div>
         <div style="font-size:12px;margin-bottom:8px;color:#fff;">${p.ip}</div>
@@ -1446,7 +1446,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         <div style="color:#E040FB;font-size:14px;font-weight:700;margin-bottom:6px;">${iconEmoji} ${p.type || 'Weather Event'}</div>
         <div style="font-size:10px;color:#E8E6E0;margin-bottom:8px;line-height:1.4;">${p.title || 'Unknown event'}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px;margin-bottom:8px;">
-          <div><span style="color:#5C5A54;">SEVERITY</span><br/><span style="color:${p.severity === 'high' ? '#FF1744' : '#FFD700'};">${(p.severity||'low').toUpperCase()}</span></div>
+          <div><span style="color:#5C5A54;">SEVERITY</span><br/><span style="color:${p.severity === 'high' ? '#FF1744' : '#FFFFFF'};">${(p.severity||'low').toUpperCase()}</span></div>
           <div><span style="color:#5C5A54;">COORDS</span><br/><span style="color:#E8E6E0;">${coords[1].toFixed(3)}°, ${coords[0].toFixed(3)}°</span></div>
         </div>
         <div style="display:flex;gap:6px;">
@@ -1531,7 +1531,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       const p = e.features?.[0]?.properties;
       if (!p) return;
       const coords = (e.features![0].geometry as any).coordinates;
-      const riskCol = p.risk === 'CRITICAL' ? '#FF1744' : p.risk === 'HIGH' ? '#FF9500' : p.risk === 'ELEVATED' ? '#FFD700' : '#00E676';
+      const riskCol = p.risk === 'CRITICAL' ? '#FF1744' : p.risk === 'HIGH' ? '#FF9500' : p.risk === 'ELEVATED' ? '#FFFFFF' : '#00E676';
       popup(coords, `<div style="${pStyle}border:1px solid ${riskCol}40;">
         <div style="color:#FF9500;font-weight:bold;font-size:11px;margin-bottom:4px;">${p.name}</div>
         <div style="font-size:9px;color:#aaa;">Traffic: <span style="color:#fff;">${p.traffic}</span></div>
@@ -2207,11 +2207,11 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         if (configureSky && map.getPitch() < 0.5) map.easeTo({ pitch: 20, duration: 1200 });
         try {
           if (configureSky) map.setSky({
-            'sky-color': '#04040A',
+            'sky-color': '#000000',
             'sky-horizon-blend': 0.5,
             'horizon-color': '#0a0a1a',
             'horizon-fog-blend': 0.3,
-            'fog-color': '#04040A',
+            'fog-color': '#000000',
             'fog-ground-blend': 0.9,
           });
         } catch (e) { console.warn('[OSIRIS] Suppressed error:', e instanceof Error ? e.message : e); }
@@ -2473,7 +2473,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
         id: 'directions-active-line', type: 'line', source: SRC_ACTIVE,
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: {
-          'line-color': '#D4AF37',
+          'line-color': '#FFFFFF',
           'line-width': ['interpolate', ['linear'], ['zoom'], 5, 4, 14, 9],
           'line-opacity': 0.95,
         },
@@ -2714,7 +2714,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
           'text-offset': [0, 1.6],
           'text-allow-overlap': true,
         },
-        paint: { 'text-color': '#FFB300', 'text-halo-color': '#0C0E1A', 'text-halo-width': 1.5 },
+        paint: { 'text-color': '#FFB300', 'text-halo-color': '#0A0A0A', 'text-halo-width': 1.5 },
       });
     }
   }, [mapReady, aircraftAirports]);
@@ -2739,7 +2739,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
 
     currentLayers.forEach(layer => {
       const sourceId = `arcgis-${layer.id}`;
-      const c = layer.color || '#D4AF37';
+      const c = layer.color || '#FFFFFF';
       const o = layer.opacity ?? 0.8;
       if (!map.getSource(sourceId)) {
         map.addSource(sourceId, { type: 'geojson', data: layer.geojson });
@@ -2830,7 +2830,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       map.addLayer({
         id: 'draw-points-temp', type: 'circle', source: SRC,
         filter: ['==', ['geometry-type'], 'MultiPoint'],
-        paint: { 'circle-color': '#00E5FF', 'circle-radius': 4, 'circle-stroke-width': 1.5, 'circle-stroke-color': '#04040A' },
+        paint: { 'circle-color': '#00E5FF', 'circle-radius': 4, 'circle-stroke-width': 1.5, 'circle-stroke-color': '#000000' },
       });
     }
 

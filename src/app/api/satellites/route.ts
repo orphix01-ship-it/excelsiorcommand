@@ -30,8 +30,8 @@ const MISSION_CLASSIFY: Record<string, { mission: string; color: string }> = {
   'ONEWEB': { mission: 'Commercial Comms', color: '#00E676' },
   'PLANET': { mission: 'Earth Imaging', color: '#00E676' },
   'WORLDVIEW': { mission: 'Commercial Imaging', color: '#00E676' },
-  'ISS': { mission: 'Space Station', color: '#FFD700' },
-  'TIANGONG': { mission: 'Space Station', color: '#FFD700' },
+  'ISS': { mission: 'Space Station', color: '#FFFFFF' },
+  'TIANGONG': { mission: 'Space Station', color: '#FFFFFF' },
   'COSMOS': { mission: 'Russian Military', color: '#FF6B6B' },
   'YAOGAN': { mission: 'Chinese Recon', color: '#FF6B6B' },
   'FENGYUN': { mission: 'Weather', color: '#87CEEB' },
@@ -42,8 +42,8 @@ const MISSION_CLASSIFY: Record<string, { mission: string; color: string }> = {
   'SENTINEL': { mission: 'Earth Observation', color: '#90EE90' },
   'TERRA': { mission: 'Earth Science', color: '#90EE90' },
   'AQUA': { mission: 'Earth Science', color: '#90EE90' },
-  'HUBBLE': { mission: 'Space Telescope', color: '#FFD700' },
-  'JAMES WEBB': { mission: 'Space Telescope', color: '#FFD700' },
+  'HUBBLE': { mission: 'Space Telescope', color: '#FFFFFF' },
+  'JAMES WEBB': { mission: 'Space Telescope', color: '#FFFFFF' },
 };
 
 function classifySatellite(name: string): { mission: string; color: string } {

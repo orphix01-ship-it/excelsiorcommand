@@ -965,7 +965,7 @@ export default function Dashboard() {
           >
             {/* ── Scanline CRT overlay ── */}
             <div className="absolute inset-0 pointer-events-none z-[1]" style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(212,175,55,0.015) 2px, rgba(212,175,55,0.015) 4px)',
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px)',
               animation: 'splashScanDrift 8s linear infinite',
             }} />
 
@@ -1000,7 +1000,7 @@ export default function Dashboard() {
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   transition={{ delay: 0.5 + i * 0.08, duration: 0.5, ease: 'easeOut' }}
                   className="text-4xl md:text-5xl font-bold tracking-[0.2em] font-mono"
-                  style={{ color: 'var(--text-heading)', textShadow: '0 0 30px rgba(212,175,55,0.2)' }}
+                  style={{ color: 'var(--text-heading)', textShadow: '0 0 30px rgba(255,255,255,0.2)' }}
                 >
                   {letter}
                 </motion.span>
@@ -1024,13 +1024,13 @@ export default function Dashboard() {
             {/* ── Multi-stage progress bar ── */}
             <div className="w-64 md:w-80 z-[2]">
               {/* Thin progress track */}
-              <div className="relative w-full h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(212,175,55,0.1)' }}>
+              <div className="relative w-full h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
                 <motion.div
                   initial={{ width: '0%' }}
                   animate={{ width: ['0%', '25%', '50%', '78%', '100%'] }}
                   transition={{ duration: 2.2, delay: 0.5, times: [0, 0.25, 0.5, 0.75, 1], ease: 'easeInOut' }}
                   className="absolute inset-y-0 left-0 rounded-full"
-                  style={{ background: 'linear-gradient(90deg, var(--gold-primary), var(--cyan-primary), var(--gold-primary))', boxShadow: '0 0 12px rgba(212,175,55,0.4)' }}
+                  style={{ background: 'linear-gradient(90deg, var(--gold-primary), var(--cyan-primary), var(--gold-primary))', boxShadow: '0 0 12px rgba(255,255,255,0.4)' }}
                 />
               </div>
 
@@ -1059,7 +1059,7 @@ export default function Dashboard() {
             {/* ── Decorative grid lines ── */}
             <div className="absolute inset-0 pointer-events-none z-[0]" style={{ opacity: 0.03 }}>
               <div className="absolute inset-0" style={{
-                backgroundImage: 'linear-gradient(rgba(212,175,55,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.5) 1px, transparent 1px)',
+                backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
                 backgroundSize: '60px 60px',
               }} />
             </div>
@@ -1240,10 +1240,10 @@ export default function Dashboard() {
       {/* ── HEADER ── */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 2.5 }} className={`absolute top-4 z-[200] pointer-events-none flex flex-col`} style={{ left: isMobile ? '24px' : '64px', right: '24px' }}>
         <div className="flex items-center gap-3 w-fit">
-          <span className="ex-crest shrink-0 w-8 h-8 md:w-10 md:h-10 transition-colors duration-500 drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]" role="img" aria-label="Excelsior" style={{ backgroundColor: '#D4AF37' }} />
+          <span className="ex-crest shrink-0 w-8 h-8 md:w-10 md:h-10 transition-colors duration-500 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" role="img" aria-label="Excelsior" style={{ backgroundColor: '#FFFFFF' }} />
           <div className="flex flex-col items-start gap-0.5">
-            <h1 className="text-lg md:text-xl font-bold tracking-[0.28em] text-[#D4AF37] font-mono">EXCELSIOR</h1>
-            <span className="text-[9px] md:text-[10px] font-mono tracking-[0.2em] opacity-80 uppercase text-[#D4AF37]">GLOBAL INTELLIGENCE GRID</span>
+            <h1 className="text-lg md:text-xl font-bold tracking-[0.28em] text-[#FFFFFF] font-mono">EXCELSIOR</h1>
+            <span className="text-[9px] md:text-[10px] font-mono tracking-[0.2em] opacity-80 uppercase text-[#FFFFFF]">GLOBAL INTELLIGENCE GRID</span>
           </div>
         </div>
         <div className="flex items-center gap-3 mt-1.5 pl-[44px] min-w-0 pr-4">
@@ -1279,15 +1279,9 @@ export default function Dashboard() {
         
         <TokenPanel />
 
-        <a href='https://ko-fi.com/M8D41ZYW4Z' target='_blank' rel='noopener noreferrer' className="pointer-events-auto glass-panel px-3 py-1.5 flex items-center gap-1.5 text-[9px] font-mono tracking-widest hover:opacity-80 transition-opacity border-[var(--gold-primary)]/40 bg-[var(--gold-primary)]/10 ml-3 shadow-[0_0_10px_rgba(255,215,0,0.1)]">
-          <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)] animate-osiris-pulse" />
-          <span className="text-[var(--gold-primary)] font-bold">SUPPORT</span>
-        </a>
+        
 
-        <a href='https://shop.osirisai.live/' target='_blank' rel='noopener noreferrer' className="pointer-events-auto glass-panel px-3 py-1.5 flex items-center gap-1.5 text-[9px] font-mono tracking-widest hover:opacity-80 transition-opacity border-[var(--cyan-primary)]/40 bg-[var(--cyan-primary)]/10 ml-3 shadow-[0_0_10px_rgba(0,229,255,0.1)]">
-          <ShoppingBag className="w-3 h-3 text-[var(--cyan-primary)]" />
-          <span className="text-[var(--cyan-primary)] font-bold">MERCH</span>
-        </a>
+        
       </motion.div>
 
       {/* ── MOBILE: Compact top status ── */}
@@ -1297,17 +1291,11 @@ export default function Dashboard() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }} className="absolute top-3 right-3 z-[200] pointer-events-auto flex flex-col items-end gap-1.5">
           <div className="flex items-center gap-2">
             <TokenPanel />
-            <a href='https://ko-fi.com/M8D41ZYW4Z' target='_blank' rel='noopener noreferrer' className="glass-panel px-2 py-1 flex items-center gap-1.5 text-[9px] font-mono tracking-widest hover:opacity-80 transition-opacity border-[var(--gold-primary)]/40 bg-[var(--gold-primary)]/10">
-              <div className="w-1 h-1 rounded-full bg-[var(--gold-primary)] animate-osiris-pulse" />
-              <span className="text-[var(--gold-primary)] font-bold">SUPPORT</span>
-            </a>
+            
           </div>
           {/* A third pill on this row pushes $OSIRIS under the wordmark on a
               375px phone, so the shop link takes a line of its own. */}
-          <a href='https://shop.osirisai.live/' target='_blank' rel='noopener noreferrer' className="glass-panel px-2 py-1 flex items-center gap-1.5 text-[9px] font-mono tracking-widest hover:opacity-80 transition-opacity border-[var(--cyan-primary)]/40 bg-[var(--cyan-primary)]/10">
-            <ShoppingBag className="w-2.5 h-2.5 text-[var(--cyan-primary)]" />
-            <span className="text-[var(--cyan-primary)] font-bold">MERCH</span>
-          </a>
+          
         </motion.div>
       )}
 
@@ -1473,7 +1461,7 @@ export default function Dashboard() {
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="absolute right-12 top-1/2 -translate-y-1/2 w-[340px]">
                 <div className="glass-panel p-3 max-h-[70vh] overflow-y-auto styled-scrollbar">
                   <ArcGISPanel
-                    onImportLayer={(layer) => setArcgisLayers(prev => [...prev.filter(l => l.id !== layer.id), { ...layer, color: layer.color || '#D4AF37', visible: true, opacity: layer.opacity ?? 0.8 }])}
+                    onImportLayer={(layer) => setArcgisLayers(prev => [...prev.filter(l => l.id !== layer.id), { ...layer, color: layer.color || '#FFFFFF', visible: true, opacity: layer.opacity ?? 0.8 }])}
                     onRemoveLayer={(id) => setArcgisLayers(prev => prev.filter(l => l.id !== id))}
                     onUpdateLayer={(id, updates) => setArcgisLayers(prev => prev.map(l => l.id === id ? { ...l, ...updates } : l))}
                     importedLayers={arcgisLayers}

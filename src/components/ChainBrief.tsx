@@ -15,7 +15,7 @@ const ACCENT = '#F7931A';
 const AUTO_REFRESH_MS = 15 * 60_000;
 
 const SEV_COLOR: Record<string, string> = {
-  critical: '#FF1744', high: '#FF3D3D', medium: '#FF9500', low: '#FFD700', info: '#00E676',
+  critical: '#FF1744', high: '#FF3D3D', medium: '#FF9500', low: '#FFFFFF', info: '#00E676',
 };
 
 const usd = (n: number | null | undefined) => {
@@ -207,10 +207,10 @@ function ChainBriefInner() {
             );
           })}
 
-          <Head title="OFAC DESIGNATED WALLETS" icon={ShieldAlert} color="#FFD700" right={`${t?.sanctioned_wallet_count ?? 0} total`} />
+          <Head title="OFAC DESIGNATED WALLETS" icon={ShieldAlert} color="#FFFFFF" right={`${t?.sanctioned_wallet_count ?? 0} total`} />
           {brief.sanctioned_wallets.slice(0, 10).map((w: any, i: number) => (
             <div key={i} className="flex items-center gap-2 py-1 text-[10px] font-mono">
-              <span className="w-[34px] font-bold text-[#FFD700]">{w.asset}</span>
+              <span className="w-[34px] font-bold text-[#FFFFFF]">{w.asset}</span>
               <span className="flex-1 break-all text-[var(--text-primary)]">{shortAddr(w.address)}</span>
               <span className="text-[var(--text-muted)]">{w.first_seen ? String(w.first_seen).slice(0, 10) : ''}</span>
             </div>

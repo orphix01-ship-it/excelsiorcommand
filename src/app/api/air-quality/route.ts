@@ -40,7 +40,7 @@ export async function GET() {
         if (val > 150) { level = 'Hazardous'; color = '#8B0000'; }
         else if (val > 100) { level = 'Unhealthy'; color = '#FF1744'; }
         else if (val > 55) { level = 'Unhealthy (Sensitive)'; color = '#FF9500'; }
-        else if (val > 35) { level = 'Moderate'; color = '#FFD700'; }
+        else if (val > 35) { level = 'Moderate'; color = '#FFFFFF'; }
 
         stations.push({
           id: `aq-${loc.location}`,

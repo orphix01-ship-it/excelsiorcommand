@@ -59,7 +59,7 @@ const ALLEGIANCE_THREAT_MAP: Record<string, ThreatLevel> = {
 const ALLEGIANCE_COLOR_MAP: Record<string, string> = {
   'HOSTILE':  '#FF1744',
   'SUSPECT':  '#FF9500',
-  'UNKNOWN':  '#FFD700',
+  'UNKNOWN':  '#FFFFFF',
   'NEUTRAL':  '#00BCD4',
   'FRIENDLY': '#00E676',
 };
@@ -182,7 +182,7 @@ export class LatticeAdapter {
     const domain = LATTICE_DOMAIN_MAP[track.trackType] || Domain.LAND;
     const allegiance = track.allegiance || 'UNKNOWN';
     const threat = ALLEGIANCE_THREAT_MAP[allegiance] || ThreatLevel.ELEVATED;
-    const color = ALLEGIANCE_COLOR_MAP[allegiance] || '#FFD700';
+    const color = ALLEGIANCE_COLOR_MAP[allegiance] || '#FFFFFF';
 
     // Determine icon based on domain
     let icon = 'dot-gold';
