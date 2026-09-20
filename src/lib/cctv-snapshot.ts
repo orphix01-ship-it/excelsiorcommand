@@ -2,6 +2,7 @@ import { gzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 /**
  * OSIRIS — the camera catalogue, saved.
@@ -28,7 +29,7 @@ const SNAPSHOT_VERSION = 1;
 
 /** Overridable so a test never writes into the real cache directory. */
 export const snapshotPath = () =>
-  process.env.OSIRIS_CCTV_SNAPSHOT || join(process.cwd(), '.cache', 'cctv-catalog.json');
+  process.env.OSIRIS_CCTV_SNAPSHOT || join(tmpdir(), 'osiris', 'cctv-catalog.json');
 
 interface SnapshotFile {
   version: number;

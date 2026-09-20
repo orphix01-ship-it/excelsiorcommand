@@ -262,29 +262,29 @@ async function getOpenSkyToken(): Promise<string | null> {
   const secret = process.env.OPENSKY_CLIENT_SECRET;
   if (!id || !secret) return null;
   if (osToken && Date.now() < osTokenExpiry) return osToken;
-  try {
-    const res = await fetch(
-      'https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ grant_type: 'client_credentials', client_id: id, client_secret: secret }),
-        signal: AbortSignal.timeout(10000),
-      }
-    );
-    if (!res.ok) { console.warn('[OSIRIS] OpenSky token failed:', res.status); return null; }
-    const data = await res.json();
-    if (!data.access_token) {
-      console.warn('[OSIRIS] OpenSky token response missing access_token');
-      return null;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(
+        'https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ grant_type: 'client_credentials', client_id: id, client_secret: secret }),
+          signal: AbortSignal.timeout(20000),
+        }
+      );
+      if (!res.ok) { console.warn('[OSIRIS] OpenSky token failed:', res.status); return null; }
+      const data = await res.json();
+      if (!data.access_token) { console.warn('[OSIRIS] OpenSky token response missing access_token'); return null; }
+      osToken = data.access_token;
+      osTokenExpiry = Date.now() + ((data.expires_in || 1800) - 60) * 1000;
+      return osToken;
+    } catch (e) {
+      console.warn(`[OSIRIS] OpenSky token error (attempt ${attempt}/3):`, e);
+      if (attempt < 3) await new Promise(r => setTimeout(r, 1500 * attempt));
     }
-    osToken = data.access_token;
-    osTokenExpiry = Date.now() + ((data.expires_in || 1800) - 60) * 1000;
-    return osToken;
-  } catch (e) {
-    console.warn('[OSIRIS] OpenSky token error:', e);
-    return null;
   }
+  return null;
 }
 
 function ingestAc(raw: any[], into: any[], seen: Set<string>) {
