@@ -1,12 +1,11 @@
 
 import { NextResponse } from 'next/server';
 import { stealthFetch } from '@/lib/stealthFetch';
-import { setGlobalDispatcher, Agent } from 'undici';
+import { setDefaultResultOrder } from 'node:dns';
 
 // Railway's IPv6 path to some hosts (e.g. auth.opensky-network.org) black-holes,
-// causing UND_ERR_CONNECT_TIMEOUT before any request timeout can help. Force IPv4
-// and a generous connect timeout for all outbound fetches in this process.
-setGlobalDispatcher(new Agent({ connect: { timeout: 30000, family: 4 } }));
+// causing UND_ERR_CONNECT_TIMEOUT. Prefer IPv4 so fetch connects on the working path.
+setDefaultResultOrder('ipv4first');
 
 export const maxDuration = 60;
 
