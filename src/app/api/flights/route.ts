@@ -126,6 +126,10 @@ const JET_CRUISE_KTS = 300;
 // response now so the next feed to die is visible instead of silent.
 const ADSB_MAX_DIST = 250; // nm — hard cap the provider enforces
 const ADSBFI_BASE = 'https://opendata.adsb.fi/api/v2';
+// airplanes.live — full civilian + military, ADSBExchange-v2 shaped.
+// Optional api-auth key lifts rate limits; works keyless where permitted.
+const AL_BASE = 'https://api.airplanes.live/v2';
+const AIRPLANESLIVE_KEY = process.env.AIRPLANESLIVE_KEY;
 // OpenSky is IP-blocked from Railway; when set, fetch states via the Cloudflare proxy instead.
 const OSKY_PROXY = process.env.OSKY_PROXY_URL;
 
@@ -137,6 +141,21 @@ const ADSBFI_GAP_MS = 1100;
 // adsb.fi serves /mil but returns 400 for /ladd, /pia and /squawk/{code},
 // so the global type feeds collapse to the military one.
 async function fetchAdsbFiRegion(lat: number, lon: number): Promise<any[]> {
+  // Primary: airplanes.live (full civilian + military; api-auth key lifts limits).
+  try {
+    const res = await stealthFetch(`${AL_BASE}/point/${lat}/${lon}/${ADSB_MAX_DIST}`, {
+      signal: AbortSignal.timeout(12000),
+      headers: AIRPLANESLIVE_KEY ? { 'api-auth': AIRPLANESLIVE_KEY } : {},
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const ac = data.ac || [];
+      if (ac.length) return ac;
+    } else {
+      await res.body?.cancel();
+    }
+  } catch {}
+  // Fallback: adsb.fi geographic feed.
   try {
     const res = await stealthFetch(`${ADSBFI_BASE}/lat/${lat}/lon/${lon}/dist/${ADSB_MAX_DIST}`, {
       signal: AbortSignal.timeout(12000),
@@ -414,7 +433,7 @@ export async function GET() {
     // 60s maxDuration above.
     if (!openSkyWorked) {
       source = 'regional';
-      console.warn('[OSIRIS] no OpenSky snapshot — falling back to adsb.fi regional sweep');
+      console.warn('[OSIRIS] regional sweep via airplanes.live' + (AIRPLANESLIVE_KEY ? ' (keyed)' : ' (keyless)') + ' + adsb.fi fallback');
 
       for (const r of REGIONS) {
         ingestAc(await fetchAdsbFiRegion(r.lat, r.lon), allRaw, seenHex);
