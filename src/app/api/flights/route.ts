@@ -126,6 +126,8 @@ const JET_CRUISE_KTS = 300;
 // response now so the next feed to die is visible instead of silent.
 const ADSB_MAX_DIST = 250; // nm — hard cap the provider enforces
 const ADSBFI_BASE = 'https://opendata.adsb.fi/api/v2';
+// OpenSky is IP-blocked from Railway; when set, fetch states via the Cloudflare proxy instead.
+const OSKY_PROXY = process.env.OSKY_PROXY_URL;
 
 // adsb.fi allows roughly one request per second and soft-throttles over that by
 // returning 200 with an empty ac[] rather than 429, so a parallel fanout looks
@@ -239,7 +241,7 @@ const CACHE_TTL = 90000;
 // so the budget was gone and the feeds it fell back to were the dead ones above.
 const hasOpenSkyCreds = () =>
   Boolean(process.env.OPENSKY_CLIENT_ID && process.env.OPENSKY_CLIENT_SECRET);
-const openSkyInterval = () => (hasOpenSkyCreds() ? 90000 : 900000);
+const openSkyInterval = () => (hasOpenSkyCreds() || OSKY_PROXY ? 90000 : 900000);
 
 // The last good OpenSky snapshot is kept and reused between those calls. On the
 // anonymous interval a refetch is only due every 15 minutes, and rebuilding the
@@ -331,10 +333,13 @@ export async function GET() {
     // instead of sum. The military feed runs every cycle regardless of OpenSky
     // status and is always current, so military traffic stays live even while an
     // anonymous OpenSky snapshot is waiting out its interval.
-    const skipOpenSky =
-      Date.now() < openSkyCooldownUntil ||
-      Date.now() - osSnapshotTime < openSkyInterval();
-    const token = skipOpenSky ? null : await getOpenSkyToken();
+    const skipOpenSky = OSKY_PROXY
+      ? (Date.now() - osSnapshotTime < openSkyInterval())
+      : (Date.now() < openSkyCooldownUntil || Date.now() - osSnapshotTime < openSkyInterval());
+    const token = (OSKY_PROXY || skipOpenSky) ? null : await getOpenSkyToken();
+    const osUrl = OSKY_PROXY
+      ? `${OSKY_PROXY}${OSKY_PROXY.includes('?') ? '&' : '?'}extended=1`
+      : 'https://opensky-network.org/api/states/all?extended=1';
     const osInit: RequestInit = token
       ? { signal: AbortSignal.timeout(30000), headers: { Authorization: `Bearer ${token}` } }
       : { signal: AbortSignal.timeout(30000) };
@@ -342,12 +347,8 @@ export async function GET() {
     const [milRes, osRes] = await Promise.allSettled([
       stealthFetch(`${ADSBFI_BASE}/mil`, { signal: AbortSignal.timeout(15000) }),
       skipOpenSky
-        ? Promise.reject(new Error('OpenSky in cooldown'))
-        // extended=1 appends the ADS-B emitter category as an 18th field. Without
-        // it the state vector is 17 long and s[17] below is silently undefined,
-        // which is what made every category_os test in classifyFlight() dead.
-        // It does not change the credit cost — that is set by the area queried.
-        : stealthFetch('https://opensky-network.org/api/states/all?extended=1', osInit),
+        ? Promise.reject(new Error('OpenSky snapshot fresh'))
+        : stealthFetch(osUrl, osInit),
     ]);
 
     // Drain the military feed — parse on ok, discard the body otherwise to free the connection.
