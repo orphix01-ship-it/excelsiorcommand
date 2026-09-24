@@ -321,8 +321,18 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'gdacs'];
+      const sources = ['straits','flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'gdacs'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
+      map.addLayer({ id: 'strait-dots', type: 'circle', source: 'straits', paint: {
+        'circle-radius': ['case', ['==',['get','status'],'elevated'], 9, 7],
+        'circle-color': ['case', ['==',['get','status'],'elevated'], '#ff3b30', '#ffab40'],
+        'circle-opacity': 0.5, 'circle-stroke-width': 2,
+        'circle-stroke-color': ['case', ['==',['get','status'],'elevated'], '#ff3b30', '#ffab40'],
+        'circle-stroke-opacity': 0.6,
+      }});
+      map.addLayer({ id: 'strait-label', type: 'symbol', source: 'straits', minzoom: 2, layout: {
+        'text-field': ['get','name'], 'text-size': 10, 'text-offset': [0, 1.3], 'text-anchor': 'top', 'text-font': ['Open Sans Bold'],
+      }, paint: { 'text-color': '#ffd8a0', 'text-halo-color': '#000000', 'text-halo-width': 1.5 }});
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
 
@@ -983,7 +993,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     // ── Satellites (SatNOGS powered) ──
     // Layers with their own click handlers. The satellite pick defers to
     // these, and to nothing else — the basemap is not a click target.
-    const CLICKABLE_LAYERS = new Set(['conflict-icons','cctv-dots','eq-circles','fires-heat',
+    const CLICKABLE_LAYERS = new Set(['strait-dots','conflict-icons','cctv-dots','eq-circles','fires-heat',
       'gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots',
       'balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots',
       'sdk-sea','sdk-air','sdk-intel','malware-dots','cyber-heads','gdelt-events-dots',
@@ -1201,6 +1211,17 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     });
 
     // ── GDELT Conflicts (with source article) ──
+    map.on('click', 'strait-dots', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      const c = p.status === 'elevated' ? '#ff3b30' : '#ffab40';
+      popup(coords, `<div style="${pStyle}border:1px solid ${c}55;">
+        <div style="color:${c};font-size:13px;font-weight:700;margin-bottom:4px;">⚓ ${htmlEsc(p.name||'')}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:6px;">${htmlEsc(p.note||'')}</div>
+        <div style="font-size:9px;color:#5C5A54;">STATUS <span style="color:${c};">${(p.status||'nominal').toUpperCase()}</span></div>
+      </div>`);
+    });
     map.on('click', 'gdacs-dots', e => {
       if (!e.features?.length) return;
       const p = e.features[0].properties as any;
@@ -1784,6 +1805,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       : []);
   }, [mapReady, (data as any).gdacs, (activeLayers as any).gdacs, setGeo]);
 
+  /* ── Chokepoints & canals (logistics) ── */
+  useEffect(() => {
+    if (!mapReady) return;
+    setGeo('straits', (activeLayers as any).chokepoints && (data as any).chokepoints
+      ? (data as any).chokepoints.map((c: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] }, properties: { name: c.name, note: c.note, status: c.status || 'nominal' } }))
+      : []);
+  }, [mapReady, (data as any).chokepoints, (activeLayers as any).chokepoints, setGeo]);
+
   /* ── GDELT 2.0 Events ── */
   useEffect(() => {
     if (!mapReady) return;
@@ -2116,6 +2145,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setVis(['fl-military'], activeLayers.military);
     setVis(['cctv-glow','cctv-dots','cctv-label'], activeLayers.cctv);
     setVis(['fires-heat'], activeLayers.fires);
+    setVis(['strait-dots','strait-label'], (activeLayers as any).chokepoints);
     setVis(['weather-glow','weather-dots','weather-label'], activeLayers.weather);
     setVis(['infra-glow','infra-dots','infra-label'], activeLayers.infrastructure);
     setVis(['maritime-glow','maritime-dots','maritime-label'], activeLayers.maritime);

@@ -145,6 +145,14 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     ],
   },
   {
+    label: 'LOGISTICS',
+    fullLabel: 'LOGISTICS / MARITIME',
+    icon: Anchor,
+    layers: [
+      { key: 'chokepoints', label: 'Chokepoints & Canals', description: 'Suez · Panama · Malacca · Hormuz · Bab-el-Mandeb · Bosphorus · Gibraltar · Good Hope', dataKey: 'chokepoints' },
+    ],
+  },
+  {
     label: 'DISPLAY',
     fullLabel: 'DISPLAY',
     icon: Sun,
