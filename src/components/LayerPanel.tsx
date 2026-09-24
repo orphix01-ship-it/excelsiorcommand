@@ -137,6 +137,14 @@ const LAYER_GROUPS: LayerGroupDef[] = [
     ],
   },
   {
+    label: 'HAZARDS',
+    fullLabel: 'STRATEGIC & HAZARDS',
+    icon: AlertTriangle,
+    layers: [
+      { key: 'gdacs', label: 'Disaster Alerts', description: 'GDACS · quakes, cyclones, floods, volcanoes', dataKey: 'gdacs' },
+    ],
+  },
+  {
     label: 'DISPLAY',
     fullLabel: 'DISPLAY',
     icon: Sun,

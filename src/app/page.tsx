@@ -333,6 +333,7 @@ export default function Dashboard() {
     gdelt_events: false,
     cf_outages: false,
     cf_attacks: false,
+    gdacs: false,
   });
   // Server-side capability flags — gate layers that need credentials.
   const selectFlatMap = () => {
@@ -757,6 +758,9 @@ export default function Dashboard() {
     // GDELT 2.0 geocoded events
     if ((activeLayers as any).gdelt_events) {
       loadLayerOnce('gdelt_events', '/api/gdelt-events?limit=600', d => ({ gdelt_events: d.events }));
+    }
+    if ((activeLayers as any).gdacs) {
+      loadLayerOnce('gdacs', '/api/gdacs', d => ({ gdacs: d.events }));
     }
 
     // Cloudflare Radar — one request backs both layers

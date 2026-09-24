@@ -321,7 +321,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       createDot(map, 'dot-fire', isGhost ? phantomPurple : '#E65100', 10);
       createDot(map, 'dot-cctv', cameraColor, 10);
 
-      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks'];
+      const sources = ['flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'gdacs'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
 
       // ── FLIGHT ROUTE VISUALIZATION SOURCES & LAYERS ──
@@ -478,6 +478,13 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
 
       map.addLayer({ id: 'gdelt-dots', type: 'circle', source: 'gdelt', paint: {
         'circle-radius': 4, 'circle-color': '#D32F2F', 'circle-opacity': 0.5, 'circle-stroke-width': 1, 'circle-stroke-color': '#D32F2F', 'circle-stroke-opacity': 0.25,
+      }});
+      map.addLayer({ id: 'gdacs-dots', type: 'circle', source: 'gdacs', paint: {
+        'circle-radius': ['match', ['get','severity'], 'Red', 9, 'Orange', 7, 5],
+        'circle-color': ['match', ['get','severity'], 'Red', '#ff3b30', 'Orange', '#ff9500', '#ffd60a'],
+        'circle-opacity': 0.55, 'circle-stroke-width': 1.5,
+        'circle-stroke-color': ['match', ['get','severity'], 'Red', '#ff3b30', 'Orange', '#ff9500', '#ffd60a'],
+        'circle-stroke-opacity': 0.35,
       }});
 
       /* ── GDELT 2.0 Events — coloured by CAMEO QuadClass so cooperation and
@@ -1194,6 +1201,18 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     });
 
     // ── GDELT Conflicts (with source article) ──
+    map.on('click', 'gdacs-dots', e => {
+      if (!e.features?.length) return;
+      const p = e.features[0].properties as any;
+      const coords = (e.features[0].geometry as any).coordinates;
+      const sevC = p.severity === 'Red' ? '#ff3b30' : p.severity === 'Orange' ? '#ff9500' : '#ffd60a';
+      const typeName = ({ EQ:'Earthquake', TC:'Cyclone', FL:'Flood', DR:'Drought', VO:'Volcano', WF:'Wildfire' } as any)[p.type] || p.type || 'Hazard';
+      popup(coords, `<div style="${pStyle}border:1px solid ${sevC}55;">
+        <div style="color:${sevC};font-size:13px;font-weight:700;margin-bottom:4px;">${(p.severity||'').toUpperCase()} ${typeName.toUpperCase()}</div>
+        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.name||'')}</div>
+        ${p.url ? `<a href="${p.url}" target="_blank" style="${linkStyle}color:${sevC};border:1px solid ${sevC}66;background:${sevC}1a;">GDACS REPORT →</a>` : ''}
+      </div>`);
+    });
     map.on('click', 'gdelt-dots', e => {
       if (!e.features?.length) return;
       const p = e.features[0].properties as any;
@@ -1310,7 +1329,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     });
 
     // ── Generic hover for clickables ──
-    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots'].forEach(layer => {
+    ['conflict-icons','cctv-dots','eq-circles','fires-heat','gdelt-dots','weather-dots','infra-dots','maritime-dots','choke-dots','news-dots','balloon-dots','rad-dots','ship-dots','sweep-device-dots','scan-targets-dots','sdk-sea','sdk-sea-glow','sdk-sea-atmo','sdk-air','sdk-air-glow','sdk-air-atmo','sdk-intel','sdk-intel-glow','sdk-intel-atmo','malware-dots','cyber-heads','gdelt-events-dots','cf-outage-dots','cf-attack-dots','gdacs-dots'].forEach(layer => {
       map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
     });
@@ -1757,6 +1776,14 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     setGeo('gdelt', activeLayers.global_incidents && data.gdelt ? data.gdelt.map((e: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [e.lng, e.lat] }, properties: { name: e.name, url: e.url, kind: e.type } })) : []);
   }, [mapReady, data.gdelt, activeLayers.global_incidents, setGeo]);
 
+  /* ── GDACS disaster alerts ── */
+  useEffect(() => {
+    if (!mapReady) return;
+    setGeo('gdacs', (activeLayers as any).gdacs && (data as any).gdacs
+      ? (data as any).gdacs.map((e: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [e.lng, e.lat] }, properties: { name: e.name, url: e.url, type: e.type, severity: e.severity } }))
+      : []);
+  }, [mapReady, (data as any).gdacs, (activeLayers as any).gdacs, setGeo]);
+
   /* ── GDELT 2.0 Events ── */
   useEffect(() => {
     if (!mapReady) return;
@@ -2074,6 +2101,7 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
     // Clearing the 3D layer is what actually turns satellites off.
     if (!anySat) { satRowsRef.current = []; satLayerRef.current?.setPoints([]); }
     setVis(['gdelt-dots'], activeLayers.global_incidents);
+    setVis(['gdacs-dots'], (activeLayers as any).gdacs);
     setVis(['gdelt-events-dots'], (activeLayers as any).gdelt_events);
     setVis(['cf-outage-halo','cf-outage-dots','cf-outage-label'], (activeLayers as any).cf_outages);
     setVis(['cf-attack-dots','cf-attack-label'], (activeLayers as any).cf_attacks);
