@@ -324,10 +324,10 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       const sources = ['straits','flights','military','jets','private-fl','satellites','earthquakes','gdelt','day-night','cctv','fires','weather','infrastructure','maritime','maritime-choke','maritime-ships','live-news','conflict-zones', 'war-alerts-targets', 'war-alerts-lines', 'balloons', 'radiation', 'ip-sweep-devices', 'ip-sweep-pulse', 'ip-sweep-connections', 'scan-targets', 'sdk-entities', 'sdk-links', 'malware-nodes', 'malware-new', 'network-mesh', 'cyber-heads', 'gdelt-events', 'cf-outages', 'cf-attacks', 'gdacs'];
       sources.forEach(s => map.addSource(s, { type: 'geojson', data: EMPTY_FC }));
       map.addLayer({ id: 'strait-dots', type: 'circle', source: 'straits', paint: {
-        'circle-radius': ['case', ['==',['get','status'],'elevated'], 9, 7],
-        'circle-color': ['case', ['==',['get','status'],'elevated'], '#ff3b30', '#ffab40'],
+        'circle-radius': ['match', ['get','status'], 'critical', 10, 'elevated', 9, 7],
+        'circle-color': ['match', ['get','status'], 'critical', '#ff3b30', 'elevated', '#ff9500', '#ffab40'],
         'circle-opacity': 0.5, 'circle-stroke-width': 2,
-        'circle-stroke-color': ['case', ['==',['get','status'],'elevated'], '#ff3b30', '#ffab40'],
+        'circle-stroke-color': ['match', ['get','status'], 'critical', '#ff3b30', 'elevated', '#ff9500', '#ffab40'],
         'circle-stroke-opacity': 0.6,
       }});
       map.addLayer({ id: 'strait-label', type: 'symbol', source: 'straits', minzoom: 2, layout: {
@@ -1215,11 +1215,19 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       if (!e.features?.length) return;
       const p = e.features[0].properties as any;
       const coords = (e.features[0].geometry as any).coordinates;
-      const c = p.status === 'elevated' ? '#ff3b30' : '#ffab40';
-      popup(coords, `<div style="${pStyle}border:1px solid ${c}55;">
-        <div style="color:${c};font-size:13px;font-weight:700;margin-bottom:4px;">⚓ ${htmlEsc(p.name||'')}</div>
-        <div style="font-size:9px;color:#E8E6E0;margin-bottom:6px;">${htmlEsc(p.note||'')}</div>
-        <div style="font-size:9px;color:#5C5A54;">STATUS <span style="color:${c};">${(p.status||'nominal').toUpperCase()}</span></div>
+      const c = p.status === 'critical' ? '#ff3b30' : p.status === 'elevated' ? '#ff9500' : '#ffab40';
+      const kRow = (k: string, v: string) => v ? `<div><span style="color:#5C5A54;">${k}</span><br/><span style="color:#E8E6E0;">${htmlEsc(v)}</span></div>` : '';
+      popup(coords, `<div style="${pStyle}border:1px solid ${c}55;min-width:250px;">
+        <div style="color:${c};font-size:13px;font-weight:700;margin-bottom:2px;">⚓ ${htmlEsc(p.name||'')}</div>
+        <div style="font-size:9px;color:${c};margin-bottom:8px;">STATUS ${(p.status||'nominal').toUpperCase()}${Number(p.alerts) ? ` · ${p.alerts} active event(s) within ~330km` : ''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:9px;margin-bottom:8px;">
+          ${kRow('TRANSIT', p.transit)}
+          ${kRow('SHARE', p.pctTrade)}
+          ${kRow('CARGO', p.cargo)}
+          ${kRow('BORDERS', p.borders)}
+        </div>
+        <div style="font-size:9px;margin-bottom:${p.nearby ? '6px' : '0'};"><span style="color:#5C5A54;">IF CLOSED</span><br/><span style="color:#E8E6E0;">${htmlEsc(p.alt||'—')} <span style="color:${c};">${htmlEsc(p.altDays||'')}</span></span></div>
+        ${p.nearby ? `<div style="font-size:9px;color:#8A8880;line-height:1.4;"><span style="color:#5C5A54;">NEARBY</span><br/>${htmlEsc(p.nearby)}</div>` : ''}
       </div>`);
     });
     map.on('click', 'gdacs-dots', e => {
@@ -1228,9 +1236,19 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
       const coords = (e.features[0].geometry as any).coordinates;
       const sevC = p.severity === 'Red' ? '#ff3b30' : p.severity === 'Orange' ? '#ff9500' : '#ffd60a';
       const typeName = ({ EQ:'Earthquake', TC:'Cyclone', FL:'Flood', DR:'Drought', VO:'Volcano', WF:'Wildfire' } as any)[p.type] || p.type || 'Hazard';
-      popup(coords, `<div style="${pStyle}border:1px solid ${sevC}55;">
-        <div style="color:${sevC};font-size:13px;font-weight:700;margin-bottom:4px;">${(p.severity||'').toUpperCase()} ${typeName.toUpperCase()}</div>
-        <div style="font-size:9px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.name||'')}</div>
+      const gRow = (k: string, v: string) => v ? `<div><span style="color:#5C5A54;">${k}</span><br/><span style="color:#E8E6E0;">${htmlEsc(v)}</span></div>` : '';
+      const sevTxt = p.sevText || (p.sevVal != null && p.sevVal !== '' ? `${p.sevVal}${p.sevUnit ? ' ' + p.sevUnit : ''}` : '');
+      const win = [p.from, p.to].filter(Boolean).map((d: string) => String(d).slice(0, 10)).join(' → ');
+      popup(coords, `<div style="${pStyle}border:1px solid ${sevC}55;min-width:230px;">
+        <div style="color:${sevC};font-size:13px;font-weight:700;margin-bottom:2px;">${(p.severity||'').toUpperCase()} ${typeName.toUpperCase()}${p.score != null && p.score !== '' ? ` · score ${p.score}` : ''}</div>
+        <div style="font-size:10px;color:#E8E6E0;margin-bottom:8px;">${htmlEsc(p.name||'')}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:9px;margin-bottom:8px;">
+          ${gRow('SEVERITY', sevTxt)}
+          ${gRow('COUNTRY', p.country)}
+          ${gRow('WINDOW', win)}
+          ${gRow('COORDS', `${coords[1].toFixed(2)}, ${coords[0].toFixed(2)}`)}
+        </div>
+        ${p.html ? `<div style="font-size:9px;color:#8A8880;line-height:1.45;margin-bottom:8px;">${htmlEsc(String(p.html).slice(0, 190))}</div>` : ''}
         ${p.url ? `<a href="${p.url}" target="_blank" style="${linkStyle}color:${sevC};border:1px solid ${sevC}66;background:${sevC}1a;">GDACS REPORT →</a>` : ''}
       </div>`);
     });
@@ -1801,17 +1819,26 @@ function OsirisMap({ data, activeLayers, onEntityClick, onMouseCoords, onRightCl
   useEffect(() => {
     if (!mapReady) return;
     setGeo('gdacs', (activeLayers as any).gdacs && (data as any).gdacs
-      ? (data as any).gdacs.map((e: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [e.lng, e.lat] }, properties: { name: e.name, url: e.url, type: e.type, severity: e.severity } }))
+      ? (data as any).gdacs.map((e: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [e.lng, e.lat] }, properties: { name: e.name, url: e.url, type: e.type, severity: e.severity, score: e.score, sevVal: e.sevVal, sevText: e.sevText, sevUnit: e.sevUnit, country: e.country, from: e.from, to: e.to, html: e.html } }))
       : []);
   }, [mapReady, (data as any).gdacs, (activeLayers as any).gdacs, setGeo]);
 
   /* ── Chokepoints & canals (logistics) ── */
   useEffect(() => {
     if (!mapReady) return;
-    setGeo('straits', (activeLayers as any).chokepoints && (data as any).chokepoints
-      ? (data as any).chokepoints.map((c: any) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] }, properties: { name: c.name, note: c.note, status: c.status || 'nominal' } }))
-      : []);
-  }, [mapReady, (data as any).chokepoints, (activeLayers as any).chokepoints, setGeo]);
+    if (!(activeLayers as any).chokepoints || !(data as any).chokepoints) { setGeo('straits', []); return; }
+    const inc = (((data as any).gdelt || []) as any[]);
+    const haz = (((data as any).gdacs || []) as any[]);
+    const near = (lat: number, lng: number, arr: any[], deg: number) => arr.filter(x => Math.abs(((x.lat ?? 0) as number) - lat) < deg && Math.abs(((x.lng ?? 0) as number) - lng) < deg);
+    setGeo('straits', (data as any).chokepoints.map((c: any) => {
+      const ni = near(c.lat, c.lng, inc, 3);
+      const nh = near(c.lat, c.lng, haz, 3);
+      const redHaz = nh.some((h: any) => h.severity === 'Red');
+      const status = (redHaz || ni.length >= 3) ? 'critical' : (ni.length || nh.length) ? 'elevated' : 'nominal';
+      const nearby = [...nh.map((h: any) => h.name), ...ni.slice(0, 3).map((x: any) => x.name)].filter(Boolean).slice(0, 4).join('  ·  ');
+      return { type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] }, properties: { name: c.name, transit: c.transit, pctTrade: c.pctTrade, cargo: c.cargo, alt: c.alt, altDays: c.altDays, borders: c.borders, status, alerts: ni.length + nh.length, nearby } };
+    }));
+  }, [mapReady, (data as any).chokepoints, (data as any).gdelt, (data as any).gdacs, (activeLayers as any).chokepoints, setGeo]);
 
   /* ── GDELT 2.0 Events ── */
   useEffect(() => {
